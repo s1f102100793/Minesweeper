@@ -1,23 +1,25 @@
-.cell {
-    width: 40px;
-    height: 40px;
+.board {
+    display: grid;
+    grid-template-columns: repeat(width, 1fr); /* 列の数だけ1frを繰り返し */
+  }
+  
+  .row {
+    display: flex;
+  }
+  
+  .cell {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .board-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    cursor: pointer;
-  }
-  
-  .open {
-    background-color: #fff;
-  }
-  
-  .adjacent-mines {
-    color: #f00;
-  }
-  
-  .mine {
-    color: #000;
+    height: 100vh; /* 画面の縦幅いっぱいに表示するために設定 */
   }
   

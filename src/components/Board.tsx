@@ -39,7 +39,11 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
       return cells;
     };
   
-    return <div className="board">{renderCells()}</div>;
+    return (
+        <div className="board-container">
+          <div className="board">{renderCells()}</div>
+        </div>
+      );
   };
 
 
