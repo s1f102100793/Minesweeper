@@ -1,25 +1,57 @@
+@font-face {
+  font-family: 'minesweeper-icons';
+  src: url('/public/icons.png') format('embedded-opentype');
+}
+
+.board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timer-display {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1rem;
+}
+
 .board {
-    display: grid;
-    grid-template-columns: repeat(width, 1fr); /* 列の数だけ1frを繰り返し */
-  }
-  
-  .row {
-    display: flex;
-  }
-  
-  .cell {
-    width: 50px;
-    height: 50px;
-    border: 1px solid #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .board-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* 画面の縦幅いっぱいに表示するために設定 */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  background-color: #c0c0c0;
+  border: 3px solid #808080;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  background-color: #808080;
+  border: 1px solid #c0c0c0;
+  box-sizing: border-box;
+}
+
+.cell.open {
+  background-color: #d0d0d0;
+}
+
+.adjacent-mines {
+  font-weight: bold;
+  font-family: 'minesweeper-icons';
+}
+
+.mine {
+  font-weight: bold;
+}
+
+.cell.open .mine {
+  display: none;
+}
