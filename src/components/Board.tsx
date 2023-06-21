@@ -10,6 +10,7 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
   const minesCount = 10;
   const initialBoard = generateInitialBoard(height, width, minesCount);
   const [boardState, setBoardState] = useState(initialBoard); // Add state for board state
+  const [isFirstClick, setIsFirstClick] = useState(true); // Add state for isFirstClick
 
   const openCell = (row: number, column: number) => {
     const newBoardState = JSON.parse(JSON.stringify(boardState));
@@ -41,15 +42,23 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
   
     setBoardState(newBoardState); // setBoardState() を openCell() の中で呼び出す
   };
-  
+
   const handleCellClick = (row: number, column: number) => {
+  if (isFirstClick) {
+    setIsFirstClick(false);
+    const newBoardState = generateInitialBoard(height, width, minesCount, row, column);
+    setBoardState(newBoardState);
+    openCell(row, column);
+  } else {
     if (boardState[row][column].hasMine) {
       alert("Game Over");
+      setIsFirstClick(true);
       setBoardState(initialBoard);
     } else {
       openCell(row, column);
     }
-  };
+  }
+};
 
   const renderCells = () => {
     const cells = [];
@@ -112,7 +121,13 @@ const Cell: React.FC<CellProps> = ({ open, hasMine, isMineVisible, adjacentMines
 
 export default Board;
 
-function generateInitialBoard(height: number, width: number, minesCount: number) {
+function generateInitialBoard(
+  height: number,
+  width: number,
+  minesCount: number,
+  firstClickRow: number | null = null,
+  firstClickColumn: number | null = null
+) {
   const board = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => ({
       isOpen: false,
@@ -127,7 +142,7 @@ function generateInitialBoard(height: number, width: number, minesCount: number)
     const row = Math.floor(Math.random() * height);
     const col = Math.floor(Math.random() * width);
 
-    if (!board[row][col].hasMine) {
+    if (!board[row][col].hasMine && (firstClickRow === null || row !== firstClickRow || col !== firstClickColumn)) {
       board[row][col].hasMine = true;
       plantedMines++;
 
