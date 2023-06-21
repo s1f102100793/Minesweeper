@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './Board.css'
 
 interface BoardProps {
@@ -11,6 +11,23 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
   const initialBoard = generateInitialBoard(height, width, minesCount);
   const [boardState, setBoardState] = useState(initialBoard); // Add state for board state
   const [isFirstClick, setIsFirstClick] = useState(true); // Add state for isFirstClick
+  const [time, setTime] = useState(0);
+
+  const timerRef = useRef<number | null>(null);
+
+const startTimer = () => {
+  if (timerRef.current) return;
+
+  timerRef.current = window.setInterval(() => {
+    setTime((prevTime) => prevTime + 1);
+  }, 1000) as unknown as number;
+};
+
+const resetTimer = () => {
+  clearInterval(timerRef.current!);
+  timerRef.current = null;
+  setTime(0);
+};
 
   const openCell = (row: number, column: number) => {
     const newBoardState = JSON.parse(JSON.stringify(boardState));
@@ -43,22 +60,32 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
     setBoardState(newBoardState); // setBoardState() を openCell() の中で呼び出す
   };
 
-  const handleCellClick = (row: number, column: number) => {
-  if (isFirstClick) {
-    setIsFirstClick(false);
-    const newBoardState = generateInitialBoard(height, width, minesCount, row, column);
-    setBoardState(newBoardState);
-    openCell(row, column);
-  } else {
-    if (boardState[row][column].hasMine) {
-      alert("Game Over");
-      setIsFirstClick(true);
-      setBoardState(initialBoard);
-    } else {
-      openCell(row, column);
-    }
+  interface TimerDisplayProps {
+    time: number;
   }
-};
+  
+  const TimerDisplay: React.FC<TimerDisplayProps> = ({ time }) => {
+    return <div className="timer-display">{time}秒</div>;
+  };
+
+  const handleCellClick = (row: number, column: number) => {
+    if (isFirstClick) {
+      setIsFirstClick(false);
+      startTimer();
+      const newBoardState = generateInitialBoard(height, width, minesCount, row, column);
+      setBoardState(newBoardState);
+      openCell(row, column);
+    } else {
+      if (boardState[row][column].hasMine) {
+        alert("Game Over");
+        setIsFirstClick(true);
+        resetTimer();
+        setBoardState(initialBoard);
+      } else {
+        openCell(row, column);
+      }
+    }
+  };
 
   const renderCells = () => {
     const cells = [];
@@ -90,6 +117,7 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
 
   return (
     <div className="board-container">
+      <TimerDisplay time={time} />
       <div className="board">{renderCells()}</div>
     </div>
   );
