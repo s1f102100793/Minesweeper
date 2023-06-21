@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 import './Board.css'
 
 interface BoardProps {
@@ -7,10 +7,24 @@ interface BoardProps {
 }
 
 const Board: React.FC<BoardProps> = ({ height, width }) => {
-  const minesCount = 10; 
+  const minesCount = 10;
   const initialBoard = generateInitialBoard(height, width, minesCount);
+  const [boardState, setBoardState] = useState(initialBoard); // Add state for board state
 
-  const handleCellClick = (row: number, column: number) => { }
+  const openCell = (row: number, column: number) => {
+    const newBoardState = JSON.parse(JSON.stringify(boardState));
+    newBoardState[row][column].isOpen = true;
+    return newBoardState;
+  };
+
+  const handleCellClick = (row: number, column: number) => {
+    if (boardState[row][column].hasMine) {
+      alert('Game Over');
+      setBoardState(initialBoard);
+    } else {
+      setBoardState(openCell(row, column));
+    }
+  };
 
   const renderCells = () => {
     const cells = [];
@@ -19,7 +33,7 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
       const rowCells = [];
 
       for (let column = 0; column < width; column++) {
-        const cell = initialBoard[row][column];
+        const cell = boardState[row][column];
         const cellKey = `${row}-${column}`;
 
         rowCells.push(
@@ -57,13 +71,19 @@ interface CellProps {
 }
 
 const Cell: React.FC<CellProps> = ({ open, hasMine, isMineVisible, adjacentMines, onClick }) => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClick();
+  };
+
   return (
-    <div className={`cell ${open ? "open" : ""}`} onClick={onClick}> 
-    {!hasMine && adjacentMines > 0 && <span className="adjacent-mines">{adjacentMines}</span>}
-      {hasMine && isMineVisible && <span className="mine">💣</span>}
+    <div className={`cell ${open ? 'open' : ''}`} onClick={handleClick}>
+      {!hasMine && adjacentMines > 0 && open && <span className="adjacent-mines">{adjacentMines}</span>}
+      {hasMine && isMineVisible && open && <span className="mine">💣</span>}
     </div>
   );
 };
+
 
 export default Board;
 
