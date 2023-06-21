@@ -13,16 +13,41 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
 
   const openCell = (row: number, column: number) => {
     const newBoardState = JSON.parse(JSON.stringify(boardState));
-    newBoardState[row][column].isOpen = true;
-    return newBoardState;
+    const queue: Array<{ row: number; col: number }> = []; // キューに入れる座標を保持
+    queue.push({ row, col: column });
+  
+    while (queue.length > 0) {
+      const { row, col } = queue.shift()!;
+  
+      if (
+        row < 0 || row >= height || col < 0 || col >= width ||
+        newBoardState[row][col].isOpen || newBoardState[row][col].hasMine
+      ) {
+        continue;
+      }
+  
+      newBoardState[row][col].isOpen = true;
+  
+      if (newBoardState[row][col].adjacentMines === 0) {
+        for (let r = row - 1; r <= row + 1; r++) {
+          for (let c = col - 1; c <= col + 1; c++) {
+            if (!(r === row && c === col)) {
+              queue.push({ row: r, col: c });
+            }
+          }
+        }
+      }
+    }
+  
+    setBoardState(newBoardState); // setBoardState() を openCell() の中で呼び出す
   };
-
+  
   const handleCellClick = (row: number, column: number) => {
     if (boardState[row][column].hasMine) {
-      alert('Game Over');
+      alert("Game Over");
       setBoardState(initialBoard);
     } else {
-      setBoardState(openCell(row, column));
+      openCell(row, column);
     }
   };
 
