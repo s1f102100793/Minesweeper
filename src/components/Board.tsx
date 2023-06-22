@@ -140,9 +140,9 @@ const Cell: React.FC<CellProps> = ({ open, hasMine, isMineVisible, adjacentMines
 
   return (
     <div className={`cell ${open ? 'open' : ''}`} onClick={handleClick}>
-      {!hasMine && adjacentMines > 0 && open && <span className="adjacent-mines">{adjacentMines}</span>}
-      {hasMine && isMineVisible && open && <span className="mine">💣</span>}
-    </div>
+    {!hasMine && adjacentMines > 0 && open && <span className="adjacent-mines" data-number={adjacentMines}></span>}
+    {hasMine && isMineVisible && open && <span className="mine">💣</span>}
+  </div>
   );
 };
 
