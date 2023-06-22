@@ -15,6 +15,18 @@ const Board: React.FC<BoardProps> = ({ height, width }) => {
 
   const timerRef = useRef<number | null>(null);
 
+  const getUnopenedCellCount = (board: any) => {
+    let unopenedCellCount = 0;
+    for (let row = 0; row < height; row++) {
+      for (let col = 0; col < width; col++) {
+        if (!board[row][col].isOpen) {
+          unopenedCellCount++;
+        }
+      }
+    }
+    return unopenedCellCount;
+  };
+
 const startTimer = () => {
   if (timerRef.current) return;
 
@@ -58,6 +70,13 @@ const resetTimer = () => {
     }
   
     setBoardState(newBoardState); // setBoardState() を openCell() の中で呼び出す
+    const unopenedCellCount = getUnopenedCellCount(newBoardState);
+    if (unopenedCellCount === minesCount) {
+      alert("Game Clear!");
+      setIsFirstClick(true);
+      resetTimer();
+      setBoardState(initialBoard);
+    }
   };
 
   interface TimerDisplayProps {
